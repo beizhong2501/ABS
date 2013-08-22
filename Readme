@@ -1,0 +1,38 @@
+ubuntu12.04没有/var/log/messages解决
+ 
+因为出错了找不到这个文件，很奇怪，因为网上介绍说查看这个文件的
+ 
+然后百度，发现有些版本是没有，不过ubuntu的可以有
+ 
+编辑/etc/rsyslog.d/50-default.conf
+ 
+其中有这么一段
+ 
+*.=info;*.=notice;*.=warn;/
+    auth,authpriv.none;/
+    cron,daemon.none;/
+    mail,news.none        -/var/log/messages
+ 
+这是本来就有，却被注释了。现在解注释就行
+ 
+保存后重启服务：sudo restart rsyslog    
+
+
+在ubuntu bash shell里
+let i=i+1  相当于是   i=$(($i+1))  但是 sh shell里面并没有let命令
+
+ubuntu sh ???.sh 时出现 let: not found
+（我的sh文件里有mv命令，结果文件全丢失了）
+出现问题的原因：It's because Ubuntu uses the dash shell as default and doesn't always recognize when you try to set the shell in a script. Even if you enter "echo $SHELL" into the console it will tell you you're using /bin/bash but for some reason it's actually using dash instead.
+#就是bash环境指向了/bin/sh，而在/bin/bash里才有let命令。
+解决办法:
+sudo dpkg-reconfigure dash
+<password>
+and when you get the option select"no" to actually use bash instead of dash
+
+或者也可以直接运行./test.sh 注意test.sh 必须有执行权限 chmod 777 test.sh 就可以了。如此以来他会按照test.sh里的第一句#!/bin/bash  来调用bash这个编译器，自然也就有let了。同样，执行bash  test.sh也可以。
+
+另外，不使用let，而用i=$(($i+1))可以避免这个问题。（用declare -i定义变量为整数类型，i=$i+1，结果还是i变成了字符串）
+
+总结：在不同的shell里面变量的赋值命令以及一些内建命令都不相同，神马sch,rsh还没咋用过，但是都是有区别的，在执行脚本时值得注意，尽量用./ 命令。
+
